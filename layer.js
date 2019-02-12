@@ -24,7 +24,6 @@
         fullScreen: false,
         //是否显示遮罩层
         mask: true,
-
     };
 
     Layer.foundation = {
@@ -36,16 +35,51 @@
         },
         //索引 标识当前构建第几个
         index: 0,
+        //根
+        modal: function () {
+            return '<div class="' + this.config.className + '-modal ' + this.config.className + '-modal-fade ' + this.config.className + '-modal-fade-in">';
+        },
+        //dialog
+        dialog: function () {
+            return '<div class="' + this.config.className + '-modal-dialog">';
+        },
+        //内容区域
+        content: function () {
+            return '<div class="' + this.config.className + '-modal-content">';
+        },
+        //头部区域
+        header: function (arg) {
+            let header = '<div class="' + this.config.className + '-modal-header">';
+            if (arg[1]) {
+                header += '<p class="' + this.config.className + '-modal-header-title">' + this.config.title + '</p>';
+            }
+            if (arg[2]) {
+                header += '<button type="button" class="' + this.config.className + '-modal-header-close"><i class="iconfont icon_guanbi icon-close"></i></button>'
+            }
+            return header + "</div>";
+        },
+        //内容区域
+        body: function () {
+            return '<div class="'+this.config.className+'-modal-body">' + this.config.content + '</div>'
+        },
+        //地脚
+        footer: function (arg) {
+            let footer = '<div class="'+this.config.className+'-modal-footer">';
+            if (arg[1]) {
+                footer += '<button type="button" class="'+this.config.className+'-modal-btn '+this.config.className+'-modal-btn-default">关闭</button>';
+            }
+            if (arg[2]) {
+                return '<button type="button" class="'+this.config.className+'-modal-btn '+this.config.className+'-modal-btn-primary">提交更改</button>';
+            }
+            return footer + '</div>';
+        },
         //构建frame
         frame: function () {
             let name = this.config.className + 'layer-frame' + this.index,
                 frame = '<iframe scrolling="auto" allowtransparency="true" ' + 'name="' + name + '"' +
-            'class="' + this.config.className + '-layer-load" ' +
-            'frameborder="0" src="' + this.config.content + '"></iframe>';
-            return {
-                frame,
-                name
-            }
+                    'class="' + this.config.className + '-layer-load" ' +
+                    'frameborder="0" src="' + this.config.content + '"></iframe>';
+            return {frame, name}
         }
     };
 
@@ -53,7 +87,22 @@
         construct: Layer,
         init: function (config) {
             this.config = $.extend({}, Layer.config, config);
-            this.index = ++Layer.foundation.index;
+            this.monster = {
+                //当前弹窗索引
+                index: ++Layer.foundation.index,
+                //frame的name属性
+                frameName: null,
+                //弹窗对象
+                modal: null,
+                //dialog
+                dialog: null,
+                //面板
+                content: null,
+                //头部
+                header: null,
+                //内容区域
+                body: null
+            };
             this.builder();
         },
         //代理对象
@@ -71,14 +120,35 @@
                     if (!this.config.content) {
                         throw new Error("content missing...")
                     }
+                    this.create();
                     this.createFrame();
                     break;
                 default:
                     console.log(2222)
             }
         },
+        create: function () {
+            this.monster.modal = $(this.proxy(Layer.foundation.modal));
+            this.monster.dialog = $(this.proxy(Layer.foundation.dialog));
+            this.monster.content = $(this.proxy(Layer.foundation.content));
+            this.monster.header = $(this.proxy(Layer.foundation.header, true, true));
+            this.monster.body = $(this.proxy(Layer.foundation.body));
+
+
+            this.monster.content.append(this.monster.header);
+            this.monster.content.append(this.body);
+            this.monster.dialog.append(this.monster.content);
+            this.monster.modal.append(this.monster.dialog);
+            $("body").append(this.monster.modal);
+        },
+        //创建frame
         createFrame: function () {
-            console.log(this.proxy(Layer.foundation.frame))
+            let frame = this.proxy(Layer.foundation.frame);
+            this.monster.frameName = frame.name;
+        },
+        //获取frame的name
+        getFrameName: function () {
+            return this.monster.frameName;
         }
 
 
