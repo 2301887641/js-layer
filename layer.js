@@ -6,8 +6,8 @@
     Layer.config = {
         //弹窗类型
         type: 1,
-        //宽度设置
-        width: "600px",
+        //区域大小
+        area: 'auto',
         //内容 如果是frame即添url
         content: null,
         //标题
@@ -66,19 +66,19 @@
         footer: function (arg) {
             let footer = '<div class="'+this.config.className+'-modal-footer">';
             if (arg[1]) {
-                footer += '<button type="button" class="'+this.config.className+'-modal-btn '+this.config.className+'-modal-btn-default">关闭</button>';
+                footer += '<button type="button" class="'+this.config.className+'-modal-btn '+this.config.className+'-modal-btn-default">关闭</button> ';
             }
             if (arg[2]) {
-                return '<button type="button" class="'+this.config.className+'-modal-btn '+this.config.className+'-modal-btn-primary">提交更改</button>';
+                footer += ' <button type="button" class="'+this.config.className+'-modal-btn '+this.config.className+'-modal-btn-primary">提交更改</button>';
             }
             return footer + '</div>';
         },
         //构建frame
         frame: function () {
             let name = this.config.className + 'layer-frame' + this.index,
-                frame = '<iframe scrolling="auto" allowtransparency="true" ' + 'name="' + name + '"' +
+                frame = $('<iframe scrolling="auto" width="100%" height="100%" allowtransparency="true" ' + 'name="' + name + '"' +
                     'class="' + this.config.className + '-layer-load" ' +
-                    'frameborder="0" src="' + this.config.content + '"></iframe>';
+                    'frameborder="0" src="' + this.config.content + '"></iframe>');
             return {frame, name}
         }
     };
@@ -87,6 +87,11 @@
         construct: Layer,
         init: function (config) {
             this.config = $.extend({}, Layer.config, config);
+            //设置区域大小
+            if(typeof this.config.area==="string"){
+                //##如果是字符串格式的转换为数组 数组的好处是如果没填也不会报错
+                this.config.area=(this.config.area==="auto")?['','']:[this.config.area,''];
+            }
             this.monster = {
                 //当前弹窗索引
                 index: ++Layer.foundation.index,
@@ -101,8 +106,11 @@
                 //头部
                 header: null,
                 //内容区域
-                body: null
+                body: null,
+                //底部区域
+                footer:null
             };
+
             this.builder();
         },
         //代理对象
@@ -129,29 +137,33 @@
         },
         create: function () {
             this.monster.modal = $(this.proxy(Layer.foundation.modal));
+            this.monster.modal.width(this.config.area[0]).height(this.config.area[1]);
             this.monster.dialog = $(this.proxy(Layer.foundation.dialog));
             this.monster.content = $(this.proxy(Layer.foundation.content));
             this.monster.header = $(this.proxy(Layer.foundation.header, true, true));
             this.monster.body = $(this.proxy(Layer.foundation.body));
+            this.monster.footer=$(this.proxy(Layer.foundation.footer,true,true));
 
 
             this.monster.content.append(this.monster.header);
-            this.monster.content.append(this.body);
+            this.monster.content.append(this.monster.body);
+            this.monster.content.append(this.monster.footer);
             this.monster.dialog.append(this.monster.content);
             this.monster.modal.append(this.monster.dialog);
             $("body").append(this.monster.modal);
         },
         //创建frame
         createFrame: function () {
-            let frame = this.proxy(Layer.foundation.frame);
-            this.monster.frameName = frame.name;
+            let frameObj = this.proxy(Layer.foundation.frame);
+
+            this.monster.frameName = frameObj.name;
+
+            this.monster.body.html(frameObj.frame)
         },
         //获取frame的name
         getFrameName: function () {
             return this.monster.frameName;
         }
-
-
     };
 
     Layer.prototype.init.prototype = Layer.prototype;

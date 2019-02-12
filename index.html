@@ -132,34 +132,13 @@
     </style>
 </head>
 <body>
-
-<div class="monster-modal monster-modal-fade monster-modal-fade-in">
-    <div class="monster-modal-dialog">
-        <div class="monster-modal-content">
-            <div class="monster-modal-header">
-                <p class="monster-modal-header-title">
-                    添加站点
-                </p>
-                <button type="button" class="monster-modal-header-close">
-                    <i class="iconfont icon_guanbi icon-close"></i>
-                </button>
-            </div>
-            <div class="monster-modal-body">
-                在这里添加一些文本
-            </div>
-            <div class="monster-modal-footer">
-                <button type="button" class="monster-modal-btn monster-modal-btn-default">关闭</button>
-                <button type="button" class="monster-modal-btn monster-modal-btn-primary">提交更改</button>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="monster-modal-mask"></div>
+<!--<div class="monster-modal-mask"></div>-->
 </body>
 </html>
 <script>
     layer({
         title:"添加",
-        content:"add.jspx"
+        content:"http://127.0.0.1:9999/admin/cms/login.do",
+        area:['500px',"600px"]
     })
 </script>
