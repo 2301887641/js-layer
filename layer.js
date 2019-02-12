@@ -6,6 +6,8 @@
     Layer.config = {
         //弹窗类型
         type: 1,
+        //偏移
+        offset: 'auto',
         //区域大小
         area: 'auto',
         //内容 如果是frame即添url
@@ -38,14 +40,6 @@
         //根
         modal: function () {
             return '<div class="' + this.config.className + '-modal ' + this.config.className + '-modal-fade ' + this.config.className + '-modal-fade-in">';
-        },
-        //dialog
-        dialog: function () {
-            return '<div class="' + this.config.className + '-modal-dialog">';
-        },
-        //内容区域
-        content: function () {
-            return '<div class="' + this.config.className + '-modal-content">';
         },
         //头部区域
         header: function (arg) {
@@ -138,27 +132,74 @@
         create: function () {
             this.monster.modal = $(this.proxy(Layer.foundation.modal));
             this.monster.modal.width(this.config.area[0]).height(this.config.area[1]);
-            this.monster.dialog = $(this.proxy(Layer.foundation.dialog));
-            this.monster.content = $(this.proxy(Layer.foundation.content));
             this.monster.header = $(this.proxy(Layer.foundation.header, true, true));
             this.monster.body = $(this.proxy(Layer.foundation.body));
             this.monster.footer=$(this.proxy(Layer.foundation.footer,true,true));
 
-
-            this.monster.content.append(this.monster.header);
-            this.monster.content.append(this.monster.body);
-            this.monster.content.append(this.monster.footer);
-            this.monster.dialog.append(this.monster.content);
-            this.monster.modal.append(this.monster.dialog);
+            this.monster.modal.append(this.monster.header);
+            this.monster.modal.append(this.monster.body);
+            this.monster.modal.append(this.monster.footer);
             $("body").append(this.monster.modal);
+            this.offset();
+
         },
         //创建frame
         createFrame: function () {
             let frameObj = this.proxy(Layer.foundation.frame);
-
             this.monster.frameName = frameObj.name;
-
-            this.monster.body.html(frameObj.frame)
+            this.monster.body.html(frameObj.frame);
+        },
+        offset:function(){
+            console.log(this.monster.modal.outerWidth())
+            this.offsetLeft=($(w).width()-this.config.area[0])/2;
+            this.offsetTop=($(w).height()-this.config.area[1])/2;
+            if(typeof this.config.offset === 'object'){
+                this.offsetLeft = (this.config.offset.left)?this.config.offset.left:this.offsetLeft;
+                this.offsetTop = (this.config.offset.top)?this.config.offset.top:this.offsetTop;
+            }else if(this.config.offset !== 'auto'){
+                switch(this.config.offset){
+                    //居顶
+                    case 't':
+                        this.offsetTop = 0;
+                        break;
+                    //右
+                    case 'r':
+                        this.offsetLeft = $(w).width() - area[0];
+                        break;
+                    //下
+                    case 'b':
+                        this.offsetTop = $(w).height() - area[1];
+                        break;
+                    //左
+                    case 'l':
+                        this.offsetLeft = 0;
+                        break;
+                    //左上角
+                    case 'lt':
+                        this.offsetTop = 0;
+                        this.offsetLeft = 0;
+                        break;
+                    //左下角
+                    case 'lb':
+                        this.offsetTop = $(w).height() - area[1];
+                        this.offsetLeft = 0;
+                        break;
+                    //右上角
+                    case 'rt':
+                        this.offsetTop = 0;
+                        this.offsetLeft = $(w).width() - area[0];
+                        break;
+                    //右下角
+                    case  'rb':
+                        this.offsetTop = $(w).height() - area[1];
+                        this.offsetLeft = $(w).width() - area[0];
+                        break;
+                    default:
+                        this.offsetTop = this.config.offset;
+                }
+            }
+            debugger
+            this.monster.modal.css({top: this.offsetTop, left: this.offsetLeft});
         },
         //获取frame的name
         getFrameName: function () {
