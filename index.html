@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_1006529_4jl0ypjt8o.css">
+    <script src="layer.js"></script>
+    <style>
+        *{
+            box-sizing: border-box;
+            /*去除蓝边*/
+            outline: none;
+        }
+        .icon_guanbi {
+            font-weight: 900;
+            font-size: 30px;
+        }
+
+        .monster-modal {
+            overflow-x: hidden;
+            overflow-y: auto;
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 9999;
+            outline: 0;
+        }
+
+        .monster-modal-fade {
+            transition: opacity .15s linear;
+        }
+
+        .monster-modal-fade.monster-modal-fade-in {
+            opacity: 1;
+        }
+
+        .monster-modal-fade-in .monster-modal-dialog {
+            transform: translate(0, 0);
+        }
+
+        .monster-modal-fade .monster-modal-dialog {
+            transition: transform .3s ease-out;
+        }
+
+        .monster-modal-dialog {
+            position: relative;
+            width: auto;
+            margin: 30px auto;
+        }
+
+        .monster-modal-content {
+            position: relative;
+            background-color: #fff;
+            -webkit-background-clip: padding-box;
+            background-clip: padding-box;
+            border: 1px solid rgba(0, 0, 0, .2);
+            border-radius: 6px;
+            outline: 0;
+            box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
+        }
+
+        .monster-modal-header {
+            padding: 15px;
+            border-bottom: 1px solid #e5e5e5;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .monster-modal-header-close {
+            padding: 0;
+            cursor: pointer;
+            background: 0 0;
+            border: 0;
+            font-size: 21px;
+            font-weight: 700;
+            line-height: 1;
+            color: #000;
+            text-shadow: 0 1px 0 #fff;
+            opacity: .2;
+        }
+
+        .monster-modal-body {
+            position: relative;
+            padding: 15px;
+        }
+
+        .monster-modal-footer {
+            padding: 15px;
+            text-align: right;
+            border-top: 1px solid #e5e5e5;
+        }
+        .monster-modal-btn{
+            display: inline-block;
+            padding: 6px 12px;
+            margin-bottom: 0;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.42857143;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            touch-action: manipulation;
+            cursor: pointer;
+            user-select: none;
+            background-image: none;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+        .monster-modal-btn-default {
+            color: #333;
+            background-color: #fff;
+            border-color: #ccc;
+        }
+        .monster-modal-btn-primary{
+            color: #fff;
+            background-color: #5bc0de;
+            border-color: #46b8da;
+        }
+        .monster-modal-mask{
+            z-index: 9998;
+            background-color: rgb(0, 0, 0);
+            opacity: 0.6;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="monster-modal monster-modal-fade monster-modal-fade-in">
+    <div class="monster-modal-dialog">
+        <div class="monster-modal-content">
+            <div class="monster-modal-header">
+                <p class="monster-modal-header-title">
+                    添加站点
+                </p>
+                <button type="button" class="monster-modal-header-close">
+                    <i class="iconfont icon_guanbi icon-close"></i>
+                </button>
+            </div>
+            <div class="monster-modal-body">
+                在这里添加一些文本
+            </div>
+            <div class="monster-modal-footer">
+                <button type="button" class="monster-modal-btn monster-modal-btn-default">关闭</button>
+                <button type="button" class="monster-modal-btn monster-modal-btn-primary">提交更改</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="monster-modal-mask"></div>
+</body>
+</html>
+<script>
+    layer({
+        content:"add.jspx"
+    })
+</script>
