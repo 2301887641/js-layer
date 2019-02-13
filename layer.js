@@ -37,6 +37,8 @@
         },
         //索引 标识当前构建第几个
         index: 0,
+        //弹窗层的zindex
+        zIndex:9999,
         //根
         modal: function () {
             return $('<div class="' + this.config.className + '-modal ' + this.config.className + '-modal-fade ' + this.config.className + '-modal-fade-in">');
@@ -134,7 +136,7 @@
         //创建基本骨架
         create: function () {
             this.monster.modal = this.proxy(Layer.foundation.modal);
-            this.monster.modal.width(this.config.area[0]).height(this.config.area[1]);
+            this.monster.modal.width(this.config.area[0]).height(this.config.area[1]).css("zIndex",Layer.foundation.zIndex++);
             this.monster.header = this.proxy(Layer.foundation.header, true, true);
             this.monster.body = this.proxy(Layer.foundation.body);
             this.monster.footer = this.proxy(Layer.foundation.footer, true, true);
@@ -212,7 +214,6 @@
         },
         //设置frame的高度
         frameAuto: function () {
-            debugger
             let area = [this.monster.modal.innerWidth(), this.monster.modal.innerHeight()]
                 , titHeight = this.monster.header.outerHeight() || 0
                 , btnHeight = this.monster.footer.outerHeight() || 0;
