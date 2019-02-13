@@ -39,7 +39,7 @@
         index: 0,
         //根
         modal: function () {
-            return '<div class="' + this.config.className + '-modal ' + this.config.className + '-modal-fade ' + this.config.className + '-modal-fade-in">';
+            return $('<div class="' + this.config.className + '-modal ' + this.config.className + '-modal-fade ' + this.config.className + '-modal-fade-in">');
         },
         //头部区域
         header: function (arg) {
@@ -50,22 +50,22 @@
             if (arg[2]) {
                 header += '<button type="button" class="' + this.config.className + '-modal-header-close"><i class="iconfont icon_guanbi icon-close"></i></button>'
             }
-            return header + "</div>";
+            return $(header + "</div>");
         },
         //内容区域
         body: function () {
-            return '<div class="'+this.config.className+'-modal-body">' + this.config.content + '</div>'
+            return $('<div class="' + this.config.className + '-modal-body">' + this.config.content + '</div>');
         },
-        //地脚
+        //页脚按钮
         footer: function (arg) {
-            let footer = '<div class="'+this.config.className+'-modal-footer">';
+            let footer = '<div class="' + this.config.className + '-modal-footer">';
             if (arg[1]) {
-                footer += '<button type="button" class="'+this.config.className+'-modal-btn '+this.config.className+'-modal-btn-default">关闭</button> ';
+                footer += '<button type="button" class="' + this.config.className + '-modal-btn ' + this.config.className + '-modal-btn-default">关闭</button> ';
             }
             if (arg[2]) {
-                footer += ' <button type="button" class="'+this.config.className+'-modal-btn '+this.config.className+'-modal-btn-primary">确定</button>';
+                footer += ' <button type="button" class="' + this.config.className + '-modal-btn ' + this.config.className + '-modal-btn-primary">确定</button>';
             }
-            return footer + '</div>';
+            return $(footer + '</div>');
         },
         //构建frame
         frame: function () {
@@ -82,9 +82,9 @@
         init: function (config) {
             this.config = $.extend({}, Layer.config, config);
             //设置区域大小
-            if(typeof this.config.area==="string"){
+            if (typeof this.config.area === "string") {
                 //##如果是字符串格式的转换为数组 数组的好处是如果没填也不会报错
-                this.config.area=(this.config.area==="auto")?['','']:[this.config.area,''];
+                this.config.area = (this.config.area === "auto") ? ['', ''] : [this.config.area, ''];
             }
             this.monster = {
                 //当前弹窗索引
@@ -102,9 +102,10 @@
                 //内容区域
                 body: null,
                 //底部区域
-                footer:null
+                footer: null,
+                //frame区域
+                frame:null
             };
-
             this.builder();
         },
         //代理对象
@@ -114,6 +115,7 @@
                 return func.call(that, arg);
             })(arguments);
         },
+        //构建
         builder: function () {
             //弹窗类型
             switch (this.config.type) {
@@ -129,12 +131,13 @@
                     console.log(2222)
             }
         },
+        //创建基本骨架
         create: function () {
-            this.monster.modal = $(this.proxy(Layer.foundation.modal));
+            this.monster.modal = this.proxy(Layer.foundation.modal);
             this.monster.modal.width(this.config.area[0]).height(this.config.area[1]);
-            this.monster.header = $(this.proxy(Layer.foundation.header, true, true));
-            this.monster.body = $(this.proxy(Layer.foundation.body));
-            this.monster.footer=$(this.proxy(Layer.foundation.footer,true,true));
+            this.monster.header = this.proxy(Layer.foundation.header, true, true);
+            this.monster.body = this.proxy(Layer.foundation.body);
+            this.monster.footer = this.proxy(Layer.foundation.footer, true, true);
 
             this.monster.modal.append(this.monster.header);
             this.monster.modal.append(this.monster.body);
@@ -145,20 +148,21 @@
         createFrame: function () {
             let frameObj = this.proxy(Layer.foundation.frame);
             this.monster.frameName = frameObj.name;
+            this.monster.frame=frameObj.frame;
             this.monster.body.html(frameObj.frame);
             //这里需要先将弹窗放到页面后 再计算弹窗的坐标才能准确
-            this.offset();
+            this.offset().frameAuto();
         },
         //设置弹窗的偏移
-        offset:function(){
+        offset: function () {
             let area = [this.monster.modal.outerWidth(), this.monster.modal.outerHeight()];
-            this.offsetLeft=($(w).width()-area[0])/2;
-            this.offsetTop=($(w).height()-area[1])/2;
-            if(typeof this.config.offset === 'object'){
-                this.offsetLeft = (this.config.offset.left)?this.config.offset.left:this.offsetLeft;
-                this.offsetTop = (this.config.offset.top)?this.config.offset.top:this.offsetTop;
-            }else if(this.config.offset !== 'auto'){
-                switch(this.config.offset){
+            this.offsetLeft = ($(w).width() - area[0]) / 2;
+            this.offsetTop = ($(w).height() - area[1]) / 2;
+            if (typeof this.config.offset === 'object') {
+                this.offsetLeft = (this.config.offset.left) ? this.config.offset.left : this.offsetLeft;
+                this.offsetTop = (this.config.offset.top) ? this.config.offset.top : this.offsetTop;
+            } else if (this.config.offset !== 'auto') {
+                switch (this.config.offset) {
                     //居顶
                     case 't':
                         this.offsetTop = 0;
@@ -200,10 +204,23 @@
                 }
             }
             this.monster.modal.css({top: this.offsetTop, left: this.offsetLeft});
+            return this;
         },
         //获取frame的name
         getFrameName: function () {
             return this.monster.frameName;
+        },
+        //设置frame的高度
+        frameAuto: function () {
+            debugger
+            let area = [this.monster.modal.innerWidth(), this.monster.modal.innerHeight()]
+                , titHeight = this.monster.header.outerHeight() || 0
+                , btnHeight = this.monster.footer.outerHeight() || 0;
+            switch (this.config.type) {
+                case Layer.foundation.type.frame:
+                    this.monster.frame.height(area[1] - titHeight - btnHeight - 2 * (parseFloat(this.monster.frame.css('padding-top')) | 0));
+                    break;
+            }
         }
     };
 
