@@ -21,23 +21,19 @@
             border-radius: 2px;
             box-shadow: 1px 1px 50px rgba(0,0,0,.3);
         }
-
-        .monster-modal-fade {
-            transition: opacity .15s linear;
+        .monster-modal-loading{
+            background:url(data:image/gif;base64,R0lGODlhJQAlAJECAL3L2AYrTv///wAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQFCgACACwAAAAAJQAlAAACi5SPqcvtDyGYIFpF690i8xUw3qJBwUlSadmcLqYmGQu6KDIeM13beGzYWWy3DlB4IYaMk+Dso2RWkFCfLPcRvFbZxFLUDTt21BW56TyjRep1e20+i+eYMR145W2eefj+6VFmgTQi+ECVY8iGxcg35phGo/iDFwlTyXWphwlm1imGRdcnuqhHeop6UAAAIfkEBQoAAgAsEAACAAQACwAAAgWMj6nLXAAh+QQFCgACACwVAAUACgALAAACFZQvgRi92dyJcVJlLobUdi8x4bIhBQAh+QQFCgACACwXABEADAADAAACBYyPqcsFACH5BAUKAAIALBUAFQAKAAsAAAITlGKZwWoMHYxqtmplxlNT7ixGAQAh+QQFCgACACwQABgABAALAAACBYyPqctcACH5BAUKAAIALAUAFQAKAAsAAAIVlC+BGL3Z3IlxUmUuhtR2LzHhsiEFACH5BAUKAAIALAEAEQAMAAMAAAIFjI+pywUAIfkEBQoAAgAsBQAFAAoACwAAAhOUYJnAagwdjGq2amXGU1PuLEYBACH5BAUKAAIALBAAAgAEAAsAAAIFhI+py1wAIfkEBQoAAgAsFQAFAAoACwAAAhWUL4AIvdnciXFSZS6G1HYvMeGyIQUAIfkEBQoAAgAsFwARAAwAAwAAAgWEj6nLBQAh+QQFCgACACwVABUACgALAAACE5RgmcBqDB2MarZqZcZTU+4sRgEAIfkEBQoAAgAsEAAYAAQACwAAAgWEj6nLXAAh+QQFCgACACwFABUACgALAAACFZQvgAi92dyJcVJlLobUdi8x4bIhBQAh+QQFCgACACwBABEADAADAAACBYSPqcsFADs=) no-repeat center center #eee;
         }
-
-        .monster-modal-fade.monster-modal-fade-in {
-            opacity: 1;
-        }
-
         .monster-modal-header {
-            padding:0 10px 0 10px;
             border-bottom: 1px solid #e5e5e5;
             display: flex;
             justify-content: space-between;
         }
+        .monster-modal-header-title{
+            padding:15px;
+        }
         .monster-modal-header-close {
-            padding: 0;
+            padding:15px;
             cursor: pointer;
             background: 0 0;
             border: 0;
@@ -63,6 +59,7 @@
             display: inline-block;
             padding: 6px 12px;
             margin-bottom: 0;
+            margin-left:10px;
             font-size: 14px;
             font-weight: 400;
             line-height: 1.42857143;
@@ -75,16 +72,6 @@
             background-image: none;
             border: 1px solid transparent;
             border-radius: 4px;
-        }
-        .monster-modal-btn-default {
-            color: #333;
-            background-color: #fff;
-            border-color: #ccc;
-        }
-        .monster-modal-btn-primary{
-            color: #fff;
-            background-color: #1E9FFF;
-            border-color: #1E9FFF;
         }
         .monster-modal-mask{
             z-index: 9998;

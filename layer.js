@@ -10,22 +10,27 @@
         offset: 'auto',
         //区域大小
         area: 'auto',
-        //内容 如果是frame即添url
+        //内容 如果是frame即为url
         content: null,
         //标题
         title: "",
         //自定义className
         className: "monster",
-        //是否显示右上角的关闭按钮，关闭后 Esc 按键也将关闭
-        closable: true,
-        //是否允许点击遮罩层关闭
-        maskClosable: true,
-        //点击确定按钮时，确定按钮是否显示 loading 状态，开启则需手动设置value来关闭对话框
-        loading: false,
-        //是否全屏显示
-        fullScreen: false,
-        //是否显示遮罩层
-        mask: true,
+        //插入的目标对象
+        element: "body",
+        //按钮
+        btn: [{
+            title: '&#x786E;&#x5B9A;',
+            color: '#fff',
+            bgColor: '#1E9FFF',
+            borderColor: "#1E9FFF"
+        }, {
+            title: '&#x53D6;&#x6D88;',
+            color: "#333",
+            bgColor: '#fff',
+            borderColor: "#dedede",
+            autoClose: true
+        }]
     };
 
     Layer.foundation = {
@@ -38,44 +43,86 @@
         //索引 标识当前构建第几个
         index: 0,
         //弹窗层的zindex
-        zIndex:9999,
+        zIndex: 9999,
         //根
         modal: function () {
             return $('<div class="' + this.config.className + '-modal ' + this.config.className + '-modal-fade ' + this.config.className + '-modal-fade-in">');
         },
         //头部区域
         header: function (arg) {
-            let header = '<div class="' + this.config.className + '-modal-header">';
-            if (arg[1]) {
-                header += '<p class="' + this.config.className + '-modal-header-title">' + this.config.title + '</p>';
-            }
-            if (arg[2]) {
-                header += '<button type="button" class="' + this.config.className + '-modal-header-close"><i class="iconfont icon_guanbi icon-close"></i></button>'
-            }
-            return $(header + "</div>");
+            return $('<div class="' + this.config.className + '-modal-header">');
         },
         //内容区域
         body: function () {
             return $('<div class="' + this.config.className + '-modal-body">' + this.config.content + '</div>');
         },
+        //发布订阅模式
+        observer: {
+            //缓存列表
+            clientList: [],
+            //订阅函数
+            listen: function (key, fn) {
+                if (!this.clientList[key])
+                    this.clientList[key] = [];
+                this.clientList[key].push(fn);
+            },
+            //发布函数
+            trigger: function () {
+                let key = Array.prototype.shift.call(arguments);
+                let fns = this.clientList[key];
+                if (!fns || fns.length === 0)
+                    return false;
+                for (let i = 0, fn; fn = fns[i++];) {
+                    fn.apply(this, arguments);
+                }
+            },
+            //删除函数
+            remove: function (key, fn) {
+                let fns = this.clientList[key];
+                if (!fns || fns.length === 0)
+                    return false;
+                if (!fn) {
+                    fns && (fns.length = 0);
+                } else {
+                    for (let i = fns.length - 1; i >= 0; i--) {
+                        let _fn = fns[i];
+                        if (_fn === fn) {
+                            fns.splice(i, 1);
+                        }
+                    }
+                }
+            }
+        },
+        //事件名称
+        eventName: "btn",
+        //btn事件存放
+        btnEvent: [],
         //页脚按钮
         footer: function (arg) {
-            let footer = '<div class="' + this.config.className + '-modal-footer">';
-            if (arg[1]) {
-                footer += '<button type="button" class="' + this.config.className + '-modal-btn ' + this.config.className + '-modal-btn-default">关闭</button> ';
-            }
-            if (arg[2]) {
-                footer += ' <button type="button" class="' + this.config.className + '-modal-btn ' + this.config.className + '-modal-btn-primary">确定</button>';
-            }
-            return $(footer + '</div>');
+            return $('<div class="' + this.config.className + '-modal-footer">');
         },
         //构建frame
         frame: function () {
-            let name = this.config.className + 'layer-frame' + this.index,
-                frame = $('<iframe scrolling="auto" width="100%" height="100%" allowtransparency="true" ' + 'name="' + name + '"' +
-                    'class="' + this.config.className + '-layer-load" ' +
+            let name = this.config.className + 'layer-frame' + (Layer.foundation.index++),
+                frame = $('<iframe scrolling="auto" width="100%" allowtransparency="true" ' + 'name="' + name + '"' +
+                    'class="monster-modal-loading" onload="this.className=\'\'"' +
                     'frameborder="0" src="' + this.config.content + '"></iframe>');
             return {frame, name}
+        },
+        //遮罩
+        mast:function(index){
+            let div=$('<div>');
+            div.css({
+                "zIndex":index,
+                "backgroundColor":"#000",
+                "opacity":0.6,
+                "height":"100%",
+                "width":"100%",
+                "position":"fixed",
+                "left":0,
+                "top":0
+            });
+            return div;
         }
     };
 
@@ -106,9 +153,19 @@
                 //底部区域
                 footer: null,
                 //frame区域
-                frame:null
+                frame: null,
+                //遮罩
+                mask:null,
             };
             this.builder();
+        },
+        //绑定事件
+        on: function (type, handler) {
+            let that = this;
+            Layer.foundation.observer.listen(type, function (arg) {
+                handler(arg);
+            });
+            return this;
         },
         //代理对象
         proxy: function (func) {
@@ -130,28 +187,74 @@
                     this.createFrame();
                     break;
                 default:
-                    console.log(2222)
+                    break;
             }
+        },
+        //构建头部
+        buildHeader: function (hasTitle, canClose) {
+            this.monster.header = this.proxy(Layer.foundation.header);
+            if (hasTitle) {
+                this.monster.header.append('<div class="' + this.config.className + '-modal-header-title">' + this.config.title + '</div>');
+            }
+            let that = this,
+                button = $('<button type="button" class="' + this.config.className + '-modal-header-close">&times;</button>');
+            if (canClose) {
+                button.click(function () {
+                    that.remove();
+                });
+            }
+            this.monster.header.append(button);
         },
         //创建基本骨架
         create: function () {
             this.monster.modal = this.proxy(Layer.foundation.modal);
-            this.monster.modal.width(this.config.area[0]).height(this.config.area[1]).css("zIndex",Layer.foundation.zIndex++);
-            this.monster.header = this.proxy(Layer.foundation.header, true, true);
+            this.monster.mask=Layer.foundation.mast(Layer.foundation.zIndex);
+            this.monster.modal.width(this.config.area[0]).height(this.config.area[1]).css("zIndex", Layer.foundation.zIndex++);
+            this.buildHeader(true, true);
             this.monster.body = this.proxy(Layer.foundation.body);
             this.monster.footer = this.proxy(Layer.foundation.footer, true, true);
+            this.bottomBtnEvent();
 
             this.monster.modal.append(this.monster.header);
             this.monster.modal.append(this.monster.body);
             this.monster.modal.append(this.monster.footer);
-            $("body").append(this.monster.modal);
+
+            $(this.config.element).append(this.monster.mask).append(this.monster.modal);
+        },
+        //给按钮绑定事件
+        bottomBtnEvent: function () {
+            let button, that = this;
+            for (let i = 0; i < this.config.btn.length; i++) {
+                Layer.foundation.btnEvent[i] = Layer.foundation.eventName + i;
+                button = $('<button type="button" class="' + this.config.className + '-modal-btn">' + this.config.btn[i].title + '</button>');
+                button.css({
+                    "borderColor": this.config.btn[i].borderColor,
+                    "backgroundColor": this.config.btn[i].bgColor,
+                    "color": this.config.btn[i].color
+                }).click(function () {
+                    if (that.config.btn[i].autoClose) {
+                        that.remove();
+                    } else {
+                        Layer.foundation.observer.trigger(Layer.foundation.btnEvent[i], that);
+                    }
+                });
+                this.monster.footer.append(button);
+            }
+        },
+        remove:function(){
+            for(let i=0;i<Layer.foundation.btnEvent.length;i++){
+                Layer.foundation.observer.remove(Layer.foundation.btnEvent[i])
+            }
+            this.monster.mask.remove();
+            this.monster.modal.remove();
         },
         //创建frame
         createFrame: function () {
             let frameObj = this.proxy(Layer.foundation.frame);
             this.monster.frameName = frameObj.name;
-            this.monster.frame=frameObj.frame;
+            this.monster.frame = frameObj.frame;
             this.monster.body.html(frameObj.frame);
+            //这里必须给iframe添加onload事件 因为iframe还没有加载完毕时 获取里面的内容会是空的
             //这里需要先将弹窗放到页面后 再计算弹窗的坐标才能准确
             this.offset().frameAuto();
         },
@@ -209,8 +312,8 @@
             return this;
         },
         //获取frame的name
-        getFrameName: function () {
-            return this.monster.frameName;
+        getFrame: function () {
+            return this.monster.frame.contents()
         },
         //设置frame的高度
         frameAuto: function () {
