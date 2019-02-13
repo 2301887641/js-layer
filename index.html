@@ -12,19 +12,11 @@
             /*去除蓝边*/
             outline: none;
         }
-        .icon_guanbi {
-            font-weight: 900;
-            font-size: 30px;
-        }
 
         .monster-modal {
             overflow-x: hidden;
             overflow-y: auto;
             position: fixed;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
             z-index: 9999;
             border-radius: 2px;
             box-shadow: 1px 1px 50px rgba(0,0,0,.3);
@@ -39,38 +31,12 @@
             opacity: 1;
         }
 
-        .monster-modal-fade-in .monster-modal-dialog {
-            transform: translate(0, 0);
-        }
-
-        .monster-modal-fade .monster-modal-dialog {
-            transition: transform .3s ease-out;
-        }
-
-        .monster-modal-dialog {
-            position: relative;
-            width: auto;
-            margin: 30px auto;
-        }
-
-        .monster-modal-content {
-            position: relative;
-            background-color: #fff;
-            -webkit-background-clip: padding-box;
-            background-clip: padding-box;
-            border: 1px solid rgba(0, 0, 0, .2);
-            border-radius: 6px;
-            outline: 0;
-            box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
-        }
-
         .monster-modal-header {
-            padding: 15px;
+            padding:0 10px 0 10px;
             border-bottom: 1px solid #e5e5e5;
             display: flex;
             justify-content: space-between;
         }
-
         .monster-modal-header-close {
             padding: 0;
             cursor: pointer;
@@ -83,12 +49,13 @@
             text-shadow: 0 1px 0 #fff;
             opacity: .2;
         }
-
+        .monster-modal-header-close:hover{
+            opacity: .7;
+        }
         .monster-modal-body {
             position: relative;
             padding: 15px;
         }
-
         .monster-modal-footer {
             padding: 15px;
             text-align: right;

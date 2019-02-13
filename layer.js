@@ -63,7 +63,7 @@
                 footer += '<button type="button" class="'+this.config.className+'-modal-btn '+this.config.className+'-modal-btn-default">关闭</button> ';
             }
             if (arg[2]) {
-                footer += ' <button type="button" class="'+this.config.className+'-modal-btn '+this.config.className+'-modal-btn-primary">提交更改</button>';
+                footer += ' <button type="button" class="'+this.config.className+'-modal-btn '+this.config.className+'-modal-btn-primary">确定</button>';
             }
             return footer + '</div>';
         },
@@ -140,19 +140,20 @@
             this.monster.modal.append(this.monster.body);
             this.monster.modal.append(this.monster.footer);
             $("body").append(this.monster.modal);
-            this.offset();
-
         },
         //创建frame
         createFrame: function () {
             let frameObj = this.proxy(Layer.foundation.frame);
             this.monster.frameName = frameObj.name;
             this.monster.body.html(frameObj.frame);
+            //这里需要先将弹窗放到页面后 再计算弹窗的坐标才能准确
+            this.offset();
         },
+        //设置弹窗的偏移
         offset:function(){
-            console.log(this.monster.modal.outerWidth())
-            this.offsetLeft=($(w).width()-this.config.area[0])/2;
-            this.offsetTop=($(w).height()-this.config.area[1])/2;
+            let area = [this.monster.modal.outerWidth(), this.monster.modal.outerHeight()];
+            this.offsetLeft=($(w).width()-area[0])/2;
+            this.offsetTop=($(w).height()-area[1])/2;
             if(typeof this.config.offset === 'object'){
                 this.offsetLeft = (this.config.offset.left)?this.config.offset.left:this.offsetLeft;
                 this.offsetTop = (this.config.offset.top)?this.config.offset.top:this.offsetTop;
@@ -198,7 +199,6 @@
                         this.offsetTop = this.config.offset;
                 }
             }
-            debugger
             this.monster.modal.css({top: this.offsetTop, left: this.offsetLeft});
         },
         //获取frame的name
